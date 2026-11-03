@@ -37,7 +37,7 @@ ${REASON_GUIDE}`;
 
 const REPLY_SYSTEM = `You write the email a small software seller's support desk sends back to a customer about a refund request.
 
-Write in the customer's language. Be warm, plain, and short (under 120 words). Sign it with the seller's support name.
+Write the subject and the body in the customer's language. Be warm, plain, and short (under 120 words). Sign it with the seller's support name.
 State the outcome exactly as given. Write no amount other than the ones provided, and promise nothing else (no extra refunds, discounts, or dates).
 For a refund: confirm it is issued to their PayPal account.
 For no refund: quote the policy sentence provided, word-for-word and in quotation marks, then offer help with the app.
@@ -58,8 +58,8 @@ export class ClaudeDesk {
       response = await this.client.beta.messages.parse({
         model: this.model,
         max_tokens: maxTokens,
-        betas: ['server-side-fallback-2026-07-01'],
-        fallbacks: 'default',
+        // Haiku has no server-side refusal fallback; a refusal there is handled below like any other.
+        ...(this.model.startsWith('claude-haiku') ? {} : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }),
         system,
         output_config: { effort, format: betaZodOutputFormat(schema) },
         messages: [{ role: 'user', content }],

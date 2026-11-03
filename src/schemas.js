@@ -52,6 +52,6 @@ export const TriageSchema = z.object({
 });
 
 export const ReplySchema = z.object({
-  subject: z.string(),
-  body: z.string().describe('Plain-text email body. No markdown.'),
+  subject: z.string().describe("Email subject, written in the customer's language."),
+  body: z.string().describe("Plain-text email body in the customer's language. No markdown."),
 });

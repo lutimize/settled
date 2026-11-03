@@ -46,7 +46,7 @@ Small cases with every check passing settle by themselves (refund + reply). Anyt
 - **Payments v2**: refund captured payment (partial and full) with `PayPal-Request-Id`.
 - **Disputes v1**: list disputes by `disputed_transaction_id` before money moves.
 - **Webhooks v1**: `verify-webhook-signature`; handles `PAYMENT.CAPTURE.REFUNDED`, `CUSTOMER.DISPUTE.CREATED/UPDATED/RESOLVED`.
-- **Claude** (`claude-opus-5-5` by default, Anthropic TypeScript SDK) with structured outputs (`output_config.format`, Zod schemas) for three tasks: policy compiling, request reading, reply drafting. Server-side refusal fallback is enabled (`fallbacks: "default"`).
+- **Claude** (`claude-haiku-5-5` by default, Anthropic TypeScript SDK) with structured outputs (`output_config.format`, Zod schemas) for three tasks: policy compiling, request reading, reply drafting. Set `CLAUDE_MODEL` to use another Claude model; on Opus and Sonnet the server-side refusal fallback (`fallbacks: "default"`) is turned on.
 
 ## Run it
 

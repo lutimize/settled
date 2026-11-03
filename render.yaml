@@ -17,7 +17,7 @@ services:
       - key: AI_MODE
         value: claude
       - key: CLAUDE_MODEL
-        value: claude-opus-5-5
+        value: claude-haiku-5-5
       - key: AUTO_REFUND_LIMIT
         value: "30.00"
       - key: AI_DAILY_CALL_LIMIT

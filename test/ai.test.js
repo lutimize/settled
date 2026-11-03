@@ -102,3 +102,14 @@ test('the daily budget stops calls before they are sent', async () => {
   await assert.rejects(desk.triage({ message: 'x', productName: 'y' }), AiError);
   assert.equal(calls.length, 0);
 });
+
+test('Haiku requests carry no fallbacks (Haiku has no server-side fallback)', async () => {
+  const { client, calls } = fakeClient(TRIAGE);
+  const desk = new ClaudeDesk({ model: 'claude-haiku-5-5', takeCall: () => true, client });
+  await desk.triage({ message: 'I changed my mind', productName: 'Quiet Hours Pro' });
+  const { headers, body } = calls[0];
+  assert.equal(body.model, 'claude-haiku-5-5');
+  assert.equal(body.fallbacks, undefined);
+  assert.doesNotMatch(headers.get('anthropic-beta') || '', /server-side-fallback/);
+  assert.equal(body.output_config.format.type, 'json_schema');
+});

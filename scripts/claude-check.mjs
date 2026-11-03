@@ -6,7 +6,7 @@ import { ClaudeDesk } from '../src/ai.js';
 import { DEFAULT_POLICY_TEXT, SELLER } from '../src/catalog.js';
 import { validateCompiledPolicy, isVerbatim, replyAmountsAreSafe } from '../src/policy.js';
 
-const ai = new ClaudeDesk({ model: process.env.CLAUDE_MODEL || 'claude-opus-5-5', takeCall: () => true });
+const ai = new ClaudeDesk({ model: process.env.CLAUDE_MODEL || 'claude-haiku-5-5', takeCall: () => true });
 const t0 = Date.now();
 const secs = () => `${((Date.now() - t0) / 1000).toFixed(1)}s`;
 

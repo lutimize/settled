@@ -36,7 +36,7 @@ export function loadConfig(env = process.env) {
     },
     ai: {
       mode: aiMode,
-      model: env.CLAUDE_MODEL || 'claude-opus-5-5',
+      model: env.CLAUDE_MODEL || 'claude-haiku-5-5',
       dailyCallLimit: int(env.AI_DAILY_CALL_LIMIT, '400'),
     },
     desk: {
