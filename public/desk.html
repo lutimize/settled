@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settled seller desk</title>
+  <link rel="stylesheet" href="/vendor/phosphor/regular/style.css">
+  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/desk.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><i class="ph ph-scales" aria-hidden="true"></i>Settled</a>
+    <nav>
+      <a href="/">Overview</a>
+      <a href="/store">Demo store</a>
+      <a href="/support">Customer support</a>
+      <a href="/desk" aria-current="page">Seller desk</a>
+    </nav>
+  </header>
+  <div class="modebar">Loading setup...</div>
+
+  <main class="wrap desk">
+    <div class="tabs" role="tablist">
+      <a role="tab" href="#requests" data-tab="requests"><i class="ph ph-tray" aria-hidden="true"></i>Requests <span class="count" id="openCount"></span></a>
+      <a role="tab" href="#policy" data-tab="policy"><i class="ph ph-book-open-text" aria-hidden="true"></i>Policy <span class="count" id="policyState"></span></a>
+      <a role="tab" href="#sales" data-tab="sales"><i class="ph ph-receipt" aria-hidden="true"></i>Sales and activity</a>
+    </div>
+
+    <!-- Requests -->
+    <section data-pane="requests" class="requests">
+      <aside class="panel caselist" id="caseList" aria-label="Refund requests"></aside>
+      <article class="panel casedetail" id="caseDetail"></article>
+    </section>
+
+    <!-- Policy -->
+    <section data-pane="policy" hidden>
+      <div class="policy-grid">
+        <div class="panel pad">
+          <label for="policyText">Your refund policy, in plain English</label>
+          <textarea id="policyText" rows="14"></textarea>
+          <div class="row" style="margin-top:12px">
+            <button class="primary" id="compile"><i class="ph ph-sparkle" aria-hidden="true"></i>Compile rules</button>
+            <span class="small muted" id="compileNote"></span>
+          </div>
+        </div>
+        <div class="panel pad" id="rulesBox"></div>
+      </div>
+    </section>
+
+    <!-- Sales -->
+    <section data-pane="sales" hidden>
+      <div class="sales-grid">
+        <div class="panel">
+          <div class="pad" style="padding-bottom:8px"><h2>Recent sales</h2><p class="small muted" style="margin-top:4px">Purchase age lets the demo show day-20 and day-40 requests without waiting. Amounts always come from PayPal.</p></div>
+          <div class="tablewrap"><table id="salesTable"></table></div>
+        </div>
+        <div class="panel pad">
+          <h2>Activity</h2>
+          <ol class="events" id="events"></ol>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="/desk.js"></script>
+</body>
+</html>

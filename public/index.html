@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settled: refunds by your policy</title>
+  <meta name="description" content="An AI refund desk for small online sellers. Claude reads the policy and the request; PayPal facts decide the money.">
+  <link rel="stylesheet" href="/vendor/phosphor/regular/style.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: start; padding-top: 16px; }
+    .hero p.lead { font-size: 17px; color: var(--muted); max-width: 52ch; margin-top: 14px; }
+    .hero .row { margin-top: 24px; }
+    .flow { counter-reset: step; display: grid; gap: 0; }
+    .flow li { list-style: none; display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); }
+    .flow li:first-child { border-top: 0; padding-top: 0; }
+    .flow .ph { font-size: 22px; color: var(--accent); margin-top: 1px; }
+    .flow p { color: var(--muted); font-size: 14px; margin-top: 2px; }
+    .split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 40px; }
+    .h3 { font-size: 15px; letter-spacing: -0.01em; }
+    .split .panel h2 { display: flex; gap: 8px; align-items: center; }
+    .split .panel h2 .ph { font-size: 18px; color: var(--accent); }
+    .split ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; }
+    .split li + li { margin-top: 4px; }
+    .tour { margin-top: 40px; }
+    .tour ol { margin: 12px 0 0; padding-left: 20px; }
+    .tour li { margin-top: 8px; }
+    @media (max-width: 860px) { .hero, .split { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><i class="ph ph-scales" aria-hidden="true"></i>Settled</a>
+    <nav>
+      <a href="/" aria-current="page">Overview</a>
+      <a href="/store">Demo store</a>
+      <a href="/support">Customer support</a>
+      <a href="/desk">Seller desk</a>
+    </nav>
+  </header>
+  <div class="modebar">Loading setup...</div>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Refund requests, settled by your policy.</h1>
+        <p class="lead">Claude reads your refund policy and each customer message. PayPal tells the desk what was paid and refunded. Code decides the amount.</p>
+        <div class="row">
+          <a class="btn primary" href="/store">Try the demo <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+          <a class="btn" href="/desk">Open the seller desk</a>
+        </div>
+      </div>
+      <ol class="flow panel pad">
+        <li><i class="ph ph-book-open-text" aria-hidden="true"></i><div><h2 class="h3">Policy becomes rules</h2><p>Claude turns your plain-English policy into rules. Every rule quotes the sentence it came from, and you approve them.</p></div></li>
+        <li><i class="ph ph-chat-circle-text" aria-hidden="true"></i><div><h2 class="h3">The request is read, not obeyed</h2><p>Claude classifies the message and flags text that tries to steer the refund.</p></div></li>
+        <li><i class="ph ph-receipt" aria-hidden="true"></i><div><h2 class="h3">PayPal supplies the facts</h2><p>Captured amount, earlier refunds and open disputes come from the PayPal APIs, checked again right before any refund.</p></div></li>
+        <li><i class="ph ph-shield-check" aria-hidden="true"></i><div><h2 class="h3">Small, clean cases settle themselves</h2><p>Under your limit with every check passing, the refund runs through PayPal and the reply goes out. Everything else waits for one click.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="split">
+      <div class="panel pad">
+        <h2 class="h3"><i class="ph ph-receipt" aria-hidden="true"></i>PayPal in this build</h2>
+        <ul>
+          <li>JavaScript SDK buttons and Orders v2 (create, capture, details)</li>
+          <li>Payments v2 refunds with idempotency keys</li>
+          <li>Disputes API check before money moves</li>
+          <li>Webhooks with signature verification</li>
+        </ul>
+      </div>
+      <div class="panel pad">
+        <h2 class="h3"><i class="ph ph-sparkle" aria-hidden="true"></i>Claude in this build</h2>
+        <ul>
+          <li>Policy compiler with word-for-word quotes</li>
+          <li>Request reading with manipulation flags</li>
+          <li>Replies in the customer's language, amount-checked</li>
+          <li>Structured outputs; no tool can move money</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tour panel pad">
+      <h2>Five-minute tour</h2>
+      <ol>
+        <li>In the <a href="/desk#policy">seller desk</a>, compile the sample policy and approve the rules.</li>
+        <li>Buy Quiet Hours Pro in the <a href="/store">demo store</a> with a PayPal sandbox buyer account.</li>
+        <li>On the receipt, open <strong>Ask for a refund</strong> and send one of the sample messages.</li>
+        <li>Watch the case in the <a href="/desk">seller desk</a>: the PayPal facts, the rule it matched, every check, and the refund ID.</li>
+        <li>Buy the Team plan and ask again: above the auto limit, the desk waits for your click.</li>
+      </ol>
+    </section>
+  </main>
+  <script type="module">
+    import { modebar } from '/common.js';
+    modebar();
+  </script>
+</body>
+</html>

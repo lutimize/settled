@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiet Hours store (demo)</title>
+  <link rel="stylesheet" href="/vendor/phosphor/regular/style.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    .store-head { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; }
+    .store-head p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
+    .products { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; margin-top: 28px; }
+    .product h2 { font-size: 22px; }
+    .product .price { font-size: 28px; font-weight: 640; letter-spacing: -0.02em; margin-top: 12px; }
+    .product p.blurb { color: var(--muted); margin-top: 6px; min-height: 48px; }
+    .paybox { margin-top: 18px; min-height: 50px; }
+    .receipt { margin-top: 24px; border-color: var(--accent); }
+    .receipt h2 { display: flex; gap: 8px; align-items: center; }
+    .receipt h2 .ph { color: var(--accent); }
+    .receipt .kv { margin-top: 14px; }
+    .receipt .row { margin-top: 18px; }
+    .fakebuyer { margin-top: 20px; max-width: 360px; }
+    @media (max-width: 760px) { .products, .store-head { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><i class="ph ph-scales" aria-hidden="true"></i>Settled</a>
+    <nav>
+      <a href="/">Overview</a>
+      <a href="/store" aria-current="page">Demo store</a>
+      <a href="/support">Customer support</a>
+      <a href="/desk">Seller desk</a>
+    </nav>
+  </header>
+  <div class="modebar">Loading setup...</div>
+
+  <main class="wrap">
+    <div class="store-head">
+      <div>
+        <p class="small muted"><i class="ph ph-storefront" aria-hidden="true"></i> Larkspur Apps, a made-up indie studio for this demo</p>
+        <h1>Quiet Hours</h1>
+        <p>A focus timer and site blocker for your desktop. Pay with PayPal; your license key appears right away.</p>
+      </div>
+    </div>
+
+    <div class="fakebuyer" id="fakebuyer" hidden>
+      <label for="buyerEmail">Buyer email (offline mode)</label>
+      <input id="buyerEmail" type="email" value="mina.park@example.com">
+      <p class="help">Offline mode has no PayPal popup; this email stands in for the PayPal account that pays.</p>
+    </div>
+
+    <section class="products" id="products"></section>
+
+    <section class="panel pad receipt" id="receipt" hidden>
+      <h2><i class="ph ph-check-circle" aria-hidden="true"></i>Payment received</h2>
+      <dl class="kv" id="receiptKv"></dl>
+      <div class="row">
+        <button id="activate"><i class="ph ph-key" aria-hidden="true"></i>Activate license in the app</button>
+        <a class="btn primary" id="refundLink" href="/support">Ask for a refund <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <p class="help">The activate button stands in for the desktop app's activation call. The refund policy treats activated licenses differently.</p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { api, config, modebar, esc, money, toast } from '/common.js';
+    modebar();
+    const cfg = await config();
+    const productsEl = document.getElementById('products');
+    let lastSale = null;
+
+    productsEl.innerHTML = cfg.products.map((p) => `
+      <article class="panel pad product">
+        <h2>${esc(p.name)}</h2>
+        <p class="blurb">${esc(p.blurb)}</p>
+        <div class="price amount">${money(p.priceCents, p.currency)}</div>
+        <div class="paybox" id="pay-${esc(p.id)}"></div>
+      </article>`).join('');
+
+    function showReceipt(sale) {
+      lastSale = sale;
+      document.getElementById('receipt').hidden = false;
+      document.getElementById('receiptKv').innerHTML = `
+        <dt>Product</dt><dd>${esc(sale.productName)}</dd>
+        <dt>Paid</dt><dd class="amount">${esc(sale.amount)}</dd>
+        <dt>PayPal order</dt><dd class="mono">${esc(sale.orderId)}</dd>
+        <dt>Invoice</dt><dd class="mono">${esc(sale.invoiceId)}</dd>
+        <dt>Paid by</dt><dd>${esc(sale.payerEmail)}</dd>
+        <dt>License key</dt><dd class="mono">${esc(sale.licenseKey)}</dd>`;
+      const q = new URLSearchParams({ order: sale.orderId, email: sale.payerEmail });
+      document.getElementById('refundLink').href = `/support?${q}`;
+      const btn = document.getElementById('activate');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ph ph-key" aria-hidden="true"></i>Activate license in the app';
+      document.getElementById('receipt').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    document.getElementById('activate').addEventListener('click', async (e) => {
+      try {
+        await api('POST', `/api/licenses/${encodeURIComponent(lastSale.licenseKey)}/activate`);
+        e.currentTarget.disabled = true;
+        e.currentTarget.innerHTML = '<i class="ph ph-check-circle" aria-hidden="true"></i>License activated';
+      } catch (err) { toast(err.message); }
+    });
+
+    const createOrder = (productId) => api('POST', '/api/checkout/orders', { productId }).then((o) => o.id);
+    const capture = (orderId) => api('POST', `/api/checkout/orders/${encodeURIComponent(orderId)}/capture`);
+
+    if (cfg.paypalMode === 'sandbox') {
+      const s = document.createElement('script');
+      s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(cfg.paypalClientId)}&currency=USD&intent=capture&components=buttons`;
+      s.onload = () => {
+        for (const p of cfg.products) {
+          window.paypal.Buttons({
+            style: { layout: 'horizontal', tagline: false, height: 42 },
+            createOrder: () => createOrder(p.id),
+            onApprove: async (data) => {
+              try { showReceipt(await capture(data.orderID)); } catch (err) { toast(err.message); }
+            },
+            onError: () => toast('PayPal could not finish the payment. Try again.'),
+          }).render(`#pay-${p.id}`);
+        }
+      };
+      s.onerror = () => toast('Could not load the PayPal SDK.');
+      document.head.append(s);
+    } else {
+      document.getElementById('fakebuyer').hidden = false;
+      for (const p of cfg.products) {
+        const btn = document.createElement('button');
+        btn.className = 'primary';
+        btn.textContent = 'Pay with offline stand-in';
+        btn.addEventListener('click', async () => {
+          btn.disabled = true;
+          try {
+            const id = await createOrder(p.id);
+            const email = document.getElementById('buyerEmail').value.trim();
+            await api('POST', `/api/fake/approve/${encodeURIComponent(id)}`, { email, given: 'Mina', surname: 'Park' });
+            showReceipt(await capture(id));
+          } catch (err) { toast(err.message); } finally { btn.disabled = false; }
+        });
+        document.getElementById(`pay-${p.id}`).append(btn);
+      }
+    }
+  </script>
+</body>
+</html>

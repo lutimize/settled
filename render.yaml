@@ -1,0 +1,32 @@
+# Render Blueprint: one web service. Secrets are set in the Render dashboard (sync: false).
+services:
+  - type: web
+    name: settled
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: node src/index.js
+    healthCheckPath: /api/config
+    envVars:
+      - key: NODE_VERSION
+        value: 22.19.0
+      - key: HOST
+        value: 0.0.0.0
+      - key: PAYPAL_MODE
+        value: sandbox
+      - key: AI_MODE
+        value: claude
+      - key: CLAUDE_MODEL
+        value: claude-opus-5-5
+      - key: AUTO_REFUND_LIMIT
+        value: "30.00"
+      - key: AI_DAILY_CALL_LIMIT
+        value: "400"
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false

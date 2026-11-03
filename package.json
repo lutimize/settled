@@ -1,0 +1,29 @@
+{
+  "name": "settled",
+  "version": "1.0.0",
+  "description": "Settled: an AI refund desk for small online sellers, built on PayPal (sandbox) and Claude.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/index.js",
+    "dev": "node --env-file-if-exists=.env --watch src/index.js",
+    "offline": "node src/offline.js",
+    "test": "node --test test/*.test.js",
+    "smoke": "node --env-file-if-exists=.env scripts/sandbox-smoke.js"
+  },
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.4.0",
+    "@phosphor-icons/web": "^2.1.2",
+    "express": "^4.22.3",
+    "geist": "^1.9.0",
+    "zod": "^4.6.7"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22.9"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.64.1"
+  }
+}
